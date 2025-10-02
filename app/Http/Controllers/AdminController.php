@@ -7,6 +7,9 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Order;
 
+use Illuminate\Support\Facades\Auth;
+
+
 use PDF;
 
 use Notification;
@@ -18,37 +21,79 @@ class AdminController extends Controller
 {
     public function view_category()
     {
-        $data=category::all();
 
-        return view('admin.category', compact('data'));
+        if(Auth::id())
+        {
+            $data=category::all();
+
+            return view('admin.category', compact('data'));
+
+        }
+        
+        else
+        {
+           return redirect ('login');
+        }
+        
     }
 
     public function add_category(Request $request)
     {
-        $data=new category;
+        if(Auth::id())
+        {
+            $data=new category;
         $data-> category_name = $request->category;
 
         $data->save();
 
         return redirect()->back()->with('message','Category Added Successfully');
+
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
     }
 
     public function delete_category($id)
     {
-        $data=category::find($id);
-        $data->delete();
-        return redirect()->back()->with('message', 'Category Deleted Successfully');
+        if(Auth::id())
+        {
+            $data=category::find($id);
+            $data->delete();
+            return redirect()->back()->with('message', 'Category Deleted Successfully');
+
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
     }
 
     public function view_product()
     {
-        $category=category::all();
-        return view('admin.product', compact('category'));
+        if(Auth::id())
+        {
+            $category=category::all();
+            return view('admin.product', compact('category'));
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
     }
 
     public function add_product(Request $request)
     {
-        $product=new product;
+        if(Auth::id())
+        {
+            $product=new product;
         $product->title=$request->title;
         $product->description=$request->description;
         $product->price=$request->price;
@@ -65,32 +110,73 @@ class AdminController extends Controller
 
         return redirect()->back()->with('message', 'Product Added Successfully');
 
+        }
+
+        else
+        {
+            return redirect('login');
+        }
+        
+
     }
 
     public function show_product()
     {
-        $product=product::all();
+        if(Auth::id())
+        {
+            $product=product::all();
         return view('admin.show_product', compact('product'));
+
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
     }
 
     public function delete_product($id)
     {
-        $product=product::find($id);
+        if(Auth::id())
+        {
+            $product=product::find($id);
         $product->delete();
 
         return redirect()->back()->with('message', 'Product Deleted Successfully');
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
     }
 
     public function update_product($id)
     {
-        $product=product::find($id);
-        $category=category::all();
-        return view('admin.update_product', compact('product', 'category'));
+        if(Auth::id())
+        {
+            $product=product::find($id);
+            $category=category::all();
+            return view('admin.update_product', compact('product', 'category'));
+
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
     }
 
     public function update_product_confirm(Request $request, $id)
     {
-        $product=product::find($id);
+
+        if(Auth::id())
+
+        {
+            $product=product::find($id);
         $product->title=$request->title;
         $product->description=$request->description;
         $product->price=$request->price;
@@ -113,18 +199,40 @@ class AdminController extends Controller
         $product->save();
 
         return redirect()->back()->with('message', 'Product Updated Successfully');
+
+        }
+
+        else
+
+        {
+            return redirect('login');
+
+        }
+        
+        
     }
 
     public function order()
     {
-        $order=order::all();
-        return view('admin.order', compact('order'));
+        if(Auth::id())
+        {
+            $order=order::all();
+            return view('admin.order', compact('order'));
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
 
     }
 
     public function delivered($id)
     {
-        $order=order::find($id);
+        if(Auth::id())
+        {
+            $order=order::find($id);
 
         $order->delivery_status="delivered";
 
@@ -133,27 +241,57 @@ class AdminController extends Controller
         $order->save();
 
         return redirect()->back();
+
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
     }
 
     public function print_pdf($id)
     {
-        $order=order::find($id);
+        if(Auth::id())
+        {
+            $order=order::find($id);
         
         $pdf=pdf::loadView('admin.pdf', compact('order'));
 
         return $pdf->download('order_details.pdf');
+
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
     }
 
     public function send_email($id)
     {
-        $order=order::find($id);
+        if(Auth::id())
+        {
+            $order=order::find($id);
 
         return view('admin.email_info', compact('order'));
+
+        }
+
+        else
+        {
+            return redirect ('login');
+        }
+        
     }
 
     public function send_user_email(Request $request, $id)
     {
-        $order=order::find($id);
+        if(Auth::id())
+        {
+            $order=order::find($id);
 
         $details = [
 
@@ -176,17 +314,33 @@ class AdminController extends Controller
         notification::send($order, new SendEmailNotification($details));
 
         return redirect()->back();
+
+        }
+
+        else
+
+            {
+                return redirect ('login');
+            }
+        
     }
 
     public function searchdata(Request $request)
     {
-        $searchText=$request->search;
+        if(Auth::id())
+        {
+            $searchText=$request->search;
 
         $order=order::where('name', 'LIKE', "%$searchText%")
         ->orWhere('phone', 'LIKE', "%$searchText%") 
         ->orWhere('product_title', 'LIKE', "%$searchText%")->get();
 
         return view('admin.order', compact('order'));
+
+        }
+
+        return redirect ('login');
+        
     }
 
 }

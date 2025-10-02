@@ -5,11 +5,10 @@
                   Our <span>products</span>
                </h2>
 
-               <br><br>
 
                <div>
 
-                  <form action="{{url('product_search')}}" method="GET">
+                  <form action="{{url('search_product')}}" method="GET">
 
                      @csrf
 
@@ -33,7 +32,7 @@
                 
             @endif
 
-
+            
             <div class="row">
 
                @foreach ($product as $products)

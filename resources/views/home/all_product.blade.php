@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <!-- Basic -->
-
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <!-- Mobile Metas -->
@@ -32,20 +30,10 @@
          <!-- header section strats -->
          @include('home.header')
          <!-- end header section -->
-         <!-- slider section -->
-         @include('home.slider')
-         <!-- end slider section -->
-      </div>
-      <!-- why section -->
-        @include('home.why')
-      <!-- end why section -->
-      
-      <!-- arrival section -->
-        @include('home.new_arrival')
-      <!-- end arrival section -->
+    
       
       <!-- product section -->
-        @include('home.product')
+        @include('home.product_view')
       <!-- end product section -->
 
 
@@ -137,18 +125,6 @@
 
       {{-- Comment and reply system ends here --}}
 
-
-      <!-- subscribe section -->
-        @include('home.subscribe')
-      <!-- end subscribe section -->
-
-      <!-- client section -->
-        @include('home.client')
-      <!-- end client section -->
-
-      <!-- footer start -->
-        @include('home.footer')
-      <!-- footer end -->
       <div class="cpy_">
          <p class="mx-auto">© 2021 All Rights Reserved By <a href="https://html.design/">Free Html Templates</a><br>
             Distributed By <a href="https://themewagon.com/" target="_blank">ThemeWagon</a>

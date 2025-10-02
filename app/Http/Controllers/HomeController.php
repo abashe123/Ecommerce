@@ -86,8 +86,44 @@ class HomeController extends Controller
         {
             $user=Auth::user();
 
+            $userid=$user->id;
+
             $product=product::find($id);
 
+            $product_exist_id=cart::where('Product_id', '=', $id)
+            ->where('user_id', '=', $userid)->get('id')->first();
+
+            if($product_exist_id)
+            {
+                $cart+cart::find($product_exist_id)->first();
+
+                $quantity=$cart->quantity;
+
+                $cart->quantity=$quantity + $request->quantity;
+
+                if($product->discount_price!=null)
+                {
+                    $cart->price=$product->discount_price * $cart->quantity;
+
+                }
+
+                else
+
+                {
+                    $cart->price=$product->price * $cart->quantity;
+                }
+
+
+                $cart->save();
+
+                return redirect()->back()->with('message', 'Product Added Successfully');
+
+            }
+
+            else
+                
+            {
+                
             $cart=new cart;
 
             $cart->name=$user->name;
@@ -117,7 +153,11 @@ class HomeController extends Controller
 
             $cart->save();
 
-            return redirect()->back();
+            return redirect()->back()->with('message', 'Product Added Successfully');
+                
+            }
+
+            
 
             
         }
@@ -323,6 +363,50 @@ class HomeController extends Controller
 
             return redirect ('login');
         }
+    }
+
+    public function product_search (Request $request)
+    {
+
+        $comment=comment::orderby('id', 'desc')->get();
+
+        $reply=reply::all();
+
+        $search_text=$request->search;
+
+        $product=product::where('title', 'LIKE', "%$search_text%")->orwhere
+        ('category', 'LIKE', "$search_text")->paginate(3);
+
+        return view('home.userpage', compact('product', 'comment', 'reply'));
+
+    }
+
+    public function product()
+    {
+
+        $product=Product::paginate(3);
+
+        $comment=comment::orderby('id', 'desc')->get();
+
+        $reply=reply::all();
+
+        return view('home.all_product', compact('product', 'comment', 'reply'));
+    }
+
+    public function search_product (Request $request)
+    {
+
+        $comment=comment::orderby('id', 'desc')->get();
+
+        $reply=reply::all();
+
+        $search_text=$request->search;
+
+        $product=product::where('title', 'LIKE', "%$search_text%")->orwhere
+        ('category', 'LIKE', "$search_text")->paginate(3);
+
+        return view('home.all_product', compact('product', 'comment', 'reply'));
+
     }
 
 
