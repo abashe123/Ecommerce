@@ -1,7 +1,12 @@
 <header class="header_section">
             <div class="container">
                <nav class="navbar navbar-expand-lg custom_nav-container ">
-                  <a class="navbar-brand" href="{{url('/')}}"><img width="250" src="/images/logo.png" alt="#" /></a>
+                  {{-- <a class="navbar-brand" href="{{url('/')}}"><img width="250" src="/images/logo1.png" alt="#" /></a> --}}
+                  
+                  <a class="navbar-brand" href="{{ url('/') }}"><img src="/images/logo2.png" 
+                     alt="Logo" class="img-fluid" style="max-height: 100px;"></a>
+
+
                   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                   <span class=""> </span>
                   </button>
