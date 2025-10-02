@@ -12,6 +12,10 @@ use App\Models\Order;
 use Session;
 use Stripe;
 
+use App\Models\Comment;
+use App\Models\Reply;
+
+
 
 
 class HomeController extends Controller
@@ -19,7 +23,12 @@ class HomeController extends Controller
     public function index()
     {
         $product=Product::paginate(3);
-        return view ('home.userpage', compact('product'));
+
+        $comment=comment::orderby('id', 'desc')->get();
+
+        $reply=reply::all();
+
+        return view ('home.userpage', compact('product', 'comment', 'reply'));
     }
     
     public function redirect()
@@ -27,12 +36,41 @@ class HomeController extends Controller
         $usertype=Auth::user()->usertype;
         if($usertype=='1')
         {
-            return view('admin.home');
+            $total_product=product::all()->count();
+
+            $total_order=order::all()->count();
+
+            $total_user=user::all()->count();
+
+            $order=order::all();
+
+            $total_revenue=0;
+
+            foreach($order as $order)
+
+            {
+                $total_revenue=$total_revenue + $order->price;
+
+            }
+
+            $total_delivered=order::where('delivery_status', '=', 'delivered')->get()->count();
+
+            $total_processing=order::where('delivery_status', '=', 'processing')->get()->count();
+
+
+            return view('admin.home', compact('total_product', 'total_order', 'total_user', 
+            'total_revenue', 'total_delivered', 'total_processing'));
         }
+
         else 
         {
             $product=Product::paginate(3);
-            return view('home.userpage', compact('product'));
+
+            $comment=comment::orderby('id', 'desc')->get();
+
+            $reply=reply::all();
+
+            return view('home.userpage', compact('product', 'comment', 'reply'));
         }
     }
 
@@ -192,6 +230,99 @@ class HomeController extends Controller
         Session::flash('Success', 'Payment successful!');
         return back();
 
+    }
+
+    public function show_order()
+    {
+        if(Auth::id())
+        {
+
+            $user=Auth::user();
+
+            $userid=$user->id;
+
+            $order=order::where('user_id', '=', $userid)->get();
+
+            return view('home.order', compact('order'));
+
+        }
+
+        else
+        {
+            return redirect('login');
+        }
+    }
+
+    public function cancel_order($id)
+    {
+
+        $order=order::find($id);
+
+        $order->delivery_status='You canceled the order';
+
+        $order->save();
+
+        return redirect()->back();
+
+
+    }
+
+    public function add_comment(Request $request)
+    {
+
+        if (Auth::id())
+        {
+
+            $comment=new comment;
+
+            $comment->name=Auth::user()->name;
+
+            $comment->user_id=Auth::user()->id;
+
+            $comment->comment=$request->comment;
+
+            $comment->save();
+
+            return redirect()->back();
+
+        }
+
+        else
+
+        {
+
+            return redirect('login');
+        }
+    }
+
+    public function add_reply(Request $request)
+    {
+
+        if(Auth::id())
+        {
+
+            $reply=new reply;
+
+            $reply->name=Auth::user()->name;
+
+            $reply->user_id=Auth::user()->id;
+
+            $reply->comment_id=$request->commentId;
+
+            $reply->reply=$request->reply;
+
+            $reply->save();
+
+            return redirect()->back();
+
+        }
+
+        else
+
+        {
+
+            return redirect ('login');
+        }
     }
 
 

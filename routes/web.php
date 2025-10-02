@@ -34,6 +34,7 @@ route::get('/delivered/{id}', [AdminController::class,'delivered']);
 route::get('/print_pdf/{id}', [AdminController::class,'print_pdf']);
 route::get('/send_email/{id}', [AdminController::class,'send_email']);
 route::get('/send_user_email/{id}', [AdminController::class,'send_user_email']);
+route::get('/search', [AdminController::class,'searchdata']);
 
 
 
@@ -44,10 +45,15 @@ route::post('/add_cart/{id}', [HomeController::class,'add_cart']);
 route::get('/show_cart', [HomeController::class,'show_cart']);
 route::get('/remove_cart/{id}', [HomeController::class,'remove_cart']);
 route::get('/cash_order', [HomeController::class,'cash_order']);
-route::get('/stripe/{totalprice}', [HomeController::class,'stripe']);
+route::get('/show_order', [HomeController::class,'show_order']);
+route::get('/cancel_order/{id}', [HomeController::class,'cancel_order']);
+route::post('/add_comment', [HomeController::class,'add_comment']);
+route::post('/add_reply', [HomeController::class,'add_reply']);
 
 
-route::post('stripe', [HomeController::class, 'stripePost'])->name('stripe.post');
+
+//route::get('/stripe/{totalprice}', [HomeController::class,'stripe']);
+//route::post('stripe', [HomeController::class, 'stripePost'])->name('stripe.post');
 
 
 
